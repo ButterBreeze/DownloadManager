@@ -24,13 +24,20 @@ namespace DownloadManager
         /// </summary>
         /// <param name="args"></param>
         public static void Main(string[] args)
+
         {
-            
-            FileSystemWatcher downloadFolderEventHandler = new FileSystemWatcher("/home/tally/Downloads");
+
+            OnChanged(null, null);
+            //FileStream file = new FileStream("downloadWatcher.txt", );
+            FileSystemWatcher downloadFolderEventHandler = new FileSystemWatcher("C:\\Users\\tally\\Downloads\\");
             downloadFolderEventHandler.Changed += new FileSystemEventHandler(OnChanged);
             downloadFolderEventHandler.Created += new FileSystemEventHandler(OnChanged);
             downloadFolderEventHandler.Deleted += new FileSystemEventHandler(OnChanged);
             //downloadFolderEventHandler.Renamed += new FileSystemEventHandler(OnChanged);
+            downloadFolderEventHandler.EnableRaisingEvents = true;
+            Console.WriteLine("Please enter '-' to exit program");
+            while (Console.Read() != '-') ;
+
         }
 
 
@@ -40,26 +47,31 @@ namespace DownloadManager
         {
             try
             {
+
+                String folderInQuestion = "C:\\Users\\tally\\Downloads\\";
                 //gets all files in downloads folder
-                String[] undesignatedFiles = Directory.GetFiles("/home/tally/Downloads/");     
+                String[] undesignatedFiles = Directory.GetFiles(folderInQuestion);     
                 //This opens the unassigned files manger window to allow you to deal with them
                 Process windowManager = new Process();
                 windowManager.StartInfo.FileName =
-                    "/home/tally/DevShtuffs/CSharpShtuff/windowManager/windowManager.exe";
-                windowManager.StartInfo.CreateNoWindow = true;
-                windowManager.StartInfo.UseShellExecute = false;
+                    "C:\\Users\\tally\\source\\repos\\FileMangerForm\\FileMangerForm\\bin\\Debug\\FileMangerForm.exe";
+                //windowManager.StartInfo.CreateNoWindow = true;
+                //windowManager.StartInfo.UseShellExecute = false;
                 
                 //this combines the array of undesignated files and sends them to the window to deal with
-                const String argsSeparator = " -";
-                String args = String.Join(argsSeparator, undesignatedFiles);
+                const String argsSeparator = "\" \"";
+                String args = "\"" + folderInQuestion + "\\\" \""+ String.Join(argsSeparator, undesignatedFiles)+ "\"";
+                Console.WriteLine(args);
                 windowManager.StartInfo.Arguments = args;
-                
+                windowManager.Start();
 
+                Console.WriteLine("Passed");
             }
             catch (Exception ex)
             {
-                
-            }
+                Console.WriteLine("failed" + ex.StackTrace.ToString());                
+                Console.ReadKey();
+            }  
         }
     }
 }
